@@ -21,14 +21,14 @@ export default function Varchi() {
 
   const fetchVarchi = async (token) => {
     try {
-      const res = await axios.get('/api/varchi', {
+      const res = await axios.get('/varchi', {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       setVarchi(res.data);
     } catch (err) {
-      console.error('Errore nel caricamento varchi:', err);
+      console.error('Errore nel caricamento varchi:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
@@ -51,15 +51,26 @@ export default function Varchi() {
         {varchi.length === 0 ? (
           <p>Nessun varco trovato.</p>
         ) : (
-          <ul className="space-y-4">
-            {varchi.map((accesso) => (
-              <li key={accesso.id} className="bg-white p-4 rounded shadow">
-                <h2 className="text-lg font-semibold">{accesso.nome_accesso}</h2>
-                <p>Tipo: {accesso.tipo}</p>
-                <p>Comando: {accesso.comando}</p>
-              </li>
-            ))}
-          </ul>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded shadow">
+              <thead className="bg-blue-600 text-white">
+                <tr>
+                  <th className="p-4 text-left">Nome Accesso</th>
+                  <th className="p-4 text-left">Tipo</th>
+                  <th className="p-4 text-left">Comando</th>
+                </tr>
+              </thead>
+              <tbody>
+                {varchi.map((varco) => (
+                  <tr key={varco.id} className="hover:bg-blue-50">
+                    <td className="p-4">{varco.nome_accesso}</td>
+                    <td className="p-4">{varco.tipo}</td>
+                    <td className="p-4">{varco.comando}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </Layout>

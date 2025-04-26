@@ -28,7 +28,7 @@ export default function Storico() {
       });
       setLogAccessi(res.data);
     } catch (err) {
-      console.error('Errore nel caricamento storico accessi:', err.response?.data || err.message);
+      console.error('Errore nel caricamento storico accessi:', err);
     } finally {
       setLoading(false);
     }
@@ -51,28 +51,16 @@ export default function Storico() {
         {logAccessi.length === 0 ? (
           <p>Nessun accesso registrato.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded shadow">
-              <thead className="bg-blue-600 text-white">
-                <tr>
-                  <th className="p-4 text-left">Utente ID</th>
-                  <th className="p-4 text-left">Accesso ID</th>
-                  <th className="p-4 text-left">Orario</th>
-                  <th className="p-4 text-left">Risultato</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logAccessi.map((log) => (
-                  <tr key={log.id} className="hover:bg-blue-50">
-                    <td className="p-4">{log.utente_id}</td>
-                    <td className="p-4">{log.accesso_id}</td>
-                    <td className="p-4">{new Date(log.timestamp).toLocaleString('it-IT')}</td>
-                    <td className="p-4">{log.risultato}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ul className="space-y-4">
+            {logAccessi.map((log) => (
+              <li key={log.id} className="bg-white p-4 rounded shadow">
+                <h2 className="text-lg font-semibold">Utente ID: {log.utente_id}</h2>
+                <p>Accesso ID: {log.accesso_id}</p>
+                <p>Orario: {new Date(log.timestamp).toLocaleString('it-IT')}</p>
+                <p>Risultato: {log.risultato}</p>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </Layout>

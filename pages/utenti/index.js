@@ -21,14 +21,14 @@ export default function Utenti() {
 
   const fetchUtenti = async (token) => {
     try {
-      const res = await axios.get('/api/utenti', {
+      const res = await axios.get('/utenti', {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       setUtenti(res.data);
     } catch (err) {
-      console.error('Errore nel caricamento utenti:', err);
+      console.error('Errore nel caricamento utenti:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
@@ -51,15 +51,28 @@ export default function Utenti() {
         {utenti.length === 0 ? (
           <p>Nessun utente trovato.</p>
         ) : (
-          <ul className="space-y-4">
-            {utenti.map((utente) => (
-              <li key={utente.id} className="bg-white p-4 rounded shadow">
-                <h2 className="text-lg font-semibold">{utente.nome} {utente.cognome}</h2>
-                <p>Cellulare: {utente.cellulare}</p>
-                <p>Email: {utente.email}</p>
-              </li>
-            ))}
-          </ul>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded shadow">
+              <thead className="bg-blue-600 text-white">
+                <tr>
+                  <th className="p-4 text-left">Nome</th>
+                  <th className="p-4 text-left">Cognome</th>
+                  <th className="p-4 text-left">Cellulare</th>
+                  <th className="p-4 text-left">Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                {utenti.map((utente) => (
+                  <tr key={utente.id} className="hover:bg-blue-50">
+                    <td className="p-4">{utente.nome}</td>
+                    <td className="p-4">{utente.cognome}</td>
+                    <td className="p-4">{utente.cellulare}</td>
+                    <td className="p-4">{utente.email}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </Layout>

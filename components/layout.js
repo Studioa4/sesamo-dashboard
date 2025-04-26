@@ -26,36 +26,37 @@ export default function Layout({ children }) {
 
         <nav className="flex flex-col space-y-4">
           <Link href="/dashboard" className="flex items-center space-x-2 hover:underline">
-            <BuildingOffice2Icon className="h-5 w-5" />
-            {sidebarOpen && <span>Dashboard</span>}
+            <span>Dashboard</span>
+          </Link>
+          <Link href="/accessi" className="flex items-center space-x-2 hover:underline">
+            <span>Accessi</span>
           </Link>
           <Link href="/impianti" className="flex items-center space-x-2 hover:underline">
-            <BuildingOffice2Icon className="h-5 w-5" />
-            {sidebarOpen && <span>Impianti</span>}
+            <span>Impianti</span>
           </Link>
           <Link href="/utenti" className="flex items-center space-x-2 hover:underline">
-            <UsersIcon className="h-5 w-5" />
-            {sidebarOpen && <span>Utenti</span>}
+            <span>Utenti</span>
           </Link>
           <Link href="/varchi" className="flex items-center space-x-2 hover:underline">
-            <KeyIcon className="h-5 w-5" />
-            {sidebarOpen && <span>Varchi</span>}
+            <span>Varchi</span>
           </Link>
           <Link href="/storico" className="flex items-center space-x-2 hover:underline">
-            <ClockIcon className="h-5 w-5" />
-            {sidebarOpen && <span>Storico</span>}
+            <span>Storico</span>
           </Link>
-          <button
-            onClick={() => {
-              localStorage.removeItem('token');
-              window.location.href = '/login';
-            }}
-            className="mt-auto flex items-center space-x-2 hover:underline text-sm"
-          >
-            <ArrowLeftOnRectangleIcon className="h-5 w-5" />
-            {sidebarOpen && <span>Logout</span>}
-          </button>
-        </nav>
+        {/* ✅ Aggiunto Accessi */}
+
+        <button
+         onClick={() => {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }}
+        className="mt-auto flex items-center space-x-2 hover:underline text-sm"
+        >
+    <span>Logout</span>
+  </button>
+</nav>
+
+
       </aside>
 
       {/* Main Content */}

@@ -1,7 +1,7 @@
 // /pages/login.js
 
 import { useState } from 'react';
-import axios from '../lib/axiosClient';
+import axios from 'axios';  // ✅ Usa axios normale
 import { useRouter } from 'next/router';
 
 export default function Login() {
@@ -13,10 +13,14 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/login', { cellulare, password });
+      const res = await axios.post('https://sesamo.brickly.cloud/api/login', {
+        cellulare,
+        password
+      });
       localStorage.setItem('token', res.data.token);
       router.push('/dashboard');
     } catch (err) {
+      console.error(err);
       setError('Login fallito. Controlla i dati.');
     }
   };
