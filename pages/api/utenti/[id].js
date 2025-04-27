@@ -1,5 +1,3 @@
-// /pages/api/utenti/[id].js
-
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
 
@@ -10,10 +8,23 @@ export default async function handler(req, res) {
   const { id } = req.query;
 
   if (req.method === 'PUT') {
-    const { nome, cognome, cellulare, email, password, ruolo } = req.body;
+    const {
+      nome,
+      cognome,
+      cellulare,
+      email,
+      indirizzo,
+      citta,
+      provincia,
+      stato,
+      password,
+      attivo,
+      superadmin,
+      ruolo
+    } = req.body;
 
     if (!nome || !cognome || !cellulare || !email || !ruolo) {
-      return res.status(400).json({ error: 'Tutti i campi sono obbligatori' });
+      return res.status(400).json({ error: 'Campi obbligatori mancanti' });
     }
 
     try {
@@ -22,6 +33,12 @@ export default async function handler(req, res) {
         cognome,
         cellulare,
         email,
+        indirizzo,
+        citta,
+        provincia,
+        stato,
+        attivo,
+        superadmin,
         ruolo
       };
 
@@ -43,12 +60,10 @@ export default async function handler(req, res) {
         }
       );
 
-      const data = response.data;
-
-      res.status(200).json({ message: 'Utente modificato con successo!', utente: data[0] });
+      res.status(200).json({ message: 'Utente modificato con successo!', utente: response.data[0] });
 
     } catch (err) {
-      console.error('Errore PATCH utenti:', err.response?.data || err.message);
+      console.error('Errore modifica utenti:', err.response?.data || err.message);
       res.status(500).json({ error: 'Errore modifica utente' });
     }
   } else if (req.method === 'DELETE') {
@@ -63,11 +78,9 @@ export default async function handler(req, res) {
           }
         }
       );
-
-      res.status(204).end(); // Nessun contenuto = eliminazione riuscita
-
+      res.status(204).end();
     } catch (err) {
-      console.error('Errore DELETE utenti:', err.response?.data || err.message);
+      console.error('Errore elimina utenti:', err.response?.data || err.message);
       res.status(500).json({ error: 'Errore eliminazione utente' });
     }
   } else {
