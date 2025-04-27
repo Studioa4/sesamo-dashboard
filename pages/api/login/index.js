@@ -1,4 +1,4 @@
-// /api/login/index.js
+// /pages/api/login/index.js
 
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
