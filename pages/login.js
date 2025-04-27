@@ -18,6 +18,7 @@ export default function Login() {
         password
       });
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('superadmin', res.data.superadmin ? 'true' : 'false');
       router.push('/dashboard');
     } catch (err) {
       console.error(err);

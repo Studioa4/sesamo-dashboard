@@ -1,7 +1,5 @@
-// /controllers/loginController.js
-
 import axios from 'axios';
-import bcrypt from 'bcryptjs'; // ✅ Ora bcryptjs corretto
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -20,35 +18,22 @@ export async function login(req, res) {
   try {
     const { data } = await supabase.get('utenti', {
       params: {
-        select: 'id, nome, cognome, cellulare, email, password_hash, attivo, superadmin', // ✅ Seleziona anche superadmin
+        select: '*',
         cellulare: `eq.${cellulare}`,
         attivo: `eq.true`
       }
     });
 
-    if (!data || data.length === 0) {
-      return res.status(401).json({ error: 'Utente non trovato' });
-    }
+    if (!data || data.length === 0) return res.status(401).json({ error: 'Utente non trovato' });
 
     const user = data[0];
     const valid = await bcrypt.compare(password, user.password_hash);
 
-    if (!valid) {
-      return res.status(403).json({ error: 'Password errata' });
-    }
+    if (!valid) return res.status(403).json({ error: 'Password errata' });
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        cellulare: user.cellulare,
-        email: user.email,
-        superadmin: user.superadmin // ✅ Aggiunto superadmin nel payload del token
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '6h' }
-    );
+    const token = jwt.sign({ id: user.id, ruolo: user.ruolo }, process.env.JWT_SECRET, { expiresIn: '6h' });
 
-    res.status(200).json({ token, superadmin: user.superadmin }); // ✅ Torna anche superadmin
+    res.status(200).json({ token });
   } catch (err) {
     console.error('Errore completo:', JSON.stringify(err, null, 2));
     res.status(500).json({ error: 'Errore nel login' });

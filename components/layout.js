@@ -1,12 +1,17 @@
 // /components/Layout.js
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bars3Icon, BuildingOffice2Icon, UsersIcon, KeyIcon, ClockIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
-
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [superadmin, setSuperadmin] = useState(false);
+
+  useEffect(() => {
+    const isSuperadmin = localStorage.getItem('superadmin') === 'true';
+    setSuperadmin(isSuperadmin);
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -31,32 +36,41 @@ export default function Layout({ children }) {
           <Link href="/accessi" className="flex items-center space-x-2 hover:underline">
             <span>Accessi</span>
           </Link>
-          <Link href="/impianti" className="flex items-center space-x-2 hover:underline">
-            <span>Impianti</span>
-          </Link>
-          <Link href="/utenti" className="flex items-center space-x-2 hover:underline">
-            <span>Utenti</span>
-          </Link>
-          <Link href="/varchi" className="flex items-center space-x-2 hover:underline">
-            <span>Varchi</span>
-          </Link>
-          <Link href="/storico" className="flex items-center space-x-2 hover:underline">
-            <span>Storico</span>
-          </Link>
-        {/* ✅ Aggiunto Accessi */}
 
-        <button
-         onClick={() => {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-        }}
-        className="mt-auto flex items-center space-x-2 hover:underline text-sm"
-        >
-    <span>Logout</span>
-  </button>
-</nav>
-
-
+          {/* Solo Superadmin vede questi menù */}
+          {superadmin && (
+            <>
+              <Link href="/impianti" className="flex items-center space-x-2 hover:underline">
+                <BuildingOffice2Icon className="h-5 w-5" />
+                <span>Impianti</span>
+              </Link>
+              <Link href="/utenti" className="flex items-center space-x-2 hover:underline">
+                <UsersIcon className="h-5 w-5" />
+                <span>Utenti</span>
+              </Link>
+              <Link href="/varchi" className="flex items-center space-x-2 hover:underline">
+                <KeyIcon className="h-5 w-5" />
+                <span>Varchi</span>
+              </Link>
+              <Link href="/storico" className="flex items-center space-x-2 hover:underline">
+                <ClockIcon className="h-5 w-5" />
+                <span>Storico</span>
+              </Link>
+            </>
+          )}
+          
+          <button
+            onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('superadmin');
+              window.location.href = '/login';
+            }}
+            className="mt-auto flex items-center space-x-2 hover:underline text-sm"
+          >
+            <ArrowLeftOnRectangleIcon className="h-5 w-5" />
+            <span>Logout</span>
+          </button>
+        </nav>
       </aside>
 
       {/* Main Content */}
