@@ -11,7 +11,8 @@ export default function Varchi() {
   const [showModal, setShowModal] = useState(false);
   const [editingVarco, setEditingVarco] = useState(null);
   const [form, setForm] = useState({
-    nome_varco: '',
+    denominazione: '',
+    codice_attivazione: '',
     impianto_id: ''
   });
 
@@ -49,14 +50,15 @@ export default function Varchi() {
   };
 
   const openModalForAdd = () => {
-    setForm({ nome_varco: '', impianto_id: '' });
+    setForm({ denominazione: '', codice_attivazione: '', impianto_id: '' });
     setEditingVarco(null);
     setShowModal(true);
   };
 
   const openModalForEdit = (varco) => {
     setForm({
-      nome_varco: varco.nome_varco,
+      denominazione: varco.denominazione,
+      codice_attivazione: varco.codice_attivazione || '',
       impianto_id: varco.impianto_id || ''
     });
     setEditingVarco(varco.id);
@@ -102,7 +104,8 @@ export default function Varchi() {
             <table className="min-w-full bg-white rounded shadow">
               <thead className="bg-blue-600 text-white">
                 <tr>
-                  <th className="p-4 text-left">Nome Varco</th>
+                  <th className="p-4 text-left">Denominazione</th>
+                  <th className="p-4 text-left">Codice Attivazione</th>
                   <th className="p-4 text-left">Impianto</th>
                   <th className="p-4 text-left">Azioni</th>
                 </tr>
@@ -110,7 +113,8 @@ export default function Varchi() {
               <tbody>
                 {varchi.map((varco) => (
                   <tr key={varco.id} className="hover:bg-blue-50">
-                    <td className="p-4">{varco.nome_varco}</td>
+                    <td className="p-4">{varco.denominazione}</td>
+                    <td className="p-4">{varco.codice_attivazione}</td>
                     <td className="p-4">{varco.impianto_id}</td>
                     <td className="p-4 flex gap-2">
                       <button
@@ -137,15 +141,8 @@ export default function Varchi() {
       {showModal && (
         <Modal title={editingVarco ? "Modifica Varco" : "Aggiungi Varco"} onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="nome_varco"
-              placeholder="Nome Varco"
-              value={form.nome_varco}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            />
+            <input type="text" name="denominazione" placeholder="Denominazione" value={form.denominazione} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+            <input type="text" name="codice_attivazione" placeholder="Codice Attivazione" value={form.codice_attivazione} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <select
               name="impianto_id"
               value={form.impianto_id}
@@ -156,24 +153,14 @@ export default function Varchi() {
               <option value="">Seleziona Impianto</option>
               {impianti.map((impianto) => (
                 <option key={impianto.id} value={impianto.id}>
-                  {impianto.nome}
+                  {impianto.denominazione}
                 </option>
               ))}
             </select>
+
             <div className="flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={() => setShowModal(false)}
-                className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400"
-              >
-                Annulla
-              </button>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-              >
-                Salva
-              </button>
+              <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>
+              <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Salva</button>
             </div>
           </form>
         </Modal>
