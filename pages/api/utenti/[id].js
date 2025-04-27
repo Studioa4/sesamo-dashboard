@@ -30,7 +30,7 @@ export default async function handler(req, res) {
         updateData.password_hash = hashedPassword;
       }
 
-      const { data, error } = await axios.patch(
+      const response = await axios.patch(
         supabaseUrl + `utenti?id=eq.${id}`,
         updateData,
         {
@@ -43,20 +43,17 @@ export default async function handler(req, res) {
         }
       );
 
-      if (error) {
-        console.error('Errore PATCH utenti:', error);
-        return res.status(500).json({ error: 'Errore modifica utente' });
-      }
+      const data = response.data;
 
       res.status(200).json({ message: 'Utente modificato con successo!', utente: data[0] });
 
     } catch (err) {
-      console.error('Errore modifica utenti:', err.response?.data || err.message);
-      res.status(500).json({ error: 'Errore server modifica utenti' });
+      console.error('Errore PATCH utenti:', err.response?.data || err.message);
+      res.status(500).json({ error: 'Errore modifica utente' });
     }
   } else if (req.method === 'DELETE') {
     try {
-      const { data, error } = await axios.delete(
+      const response = await axios.delete(
         supabaseUrl + `utenti?id=eq.${id}`,
         {
           headers: {
@@ -66,16 +63,11 @@ export default async function handler(req, res) {
         }
       );
 
-      if (error) {
-        console.error('Errore DELETE utenti:', error);
-        return res.status(500).json({ error: 'Errore eliminazione utente' });
-      }
-
-      res.status(204).end(); // Nessun contenuto
+      res.status(204).end(); // Nessun contenuto (successo cancellazione)
 
     } catch (err) {
-      console.error('Errore elimina utenti:', err.response?.data || err.message);
-      res.status(500).json({ error: 'Errore server elimina utenti' });
+      console.error('Errore DELETE utenti:', err.response?.data || err.message);
+      res.status(500).json({ error: 'Errore eliminazione utente' });
     }
   } else {
     res.status(405).json({ error: 'Metodo non consentito' });
