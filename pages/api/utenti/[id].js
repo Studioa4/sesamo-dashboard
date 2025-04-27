@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       }
 
       const response = await axios.patch(
-        supabaseUrl + `utenti?id=eq.${id}`,
+        `${supabaseUrl}utenti?id=eq.${id}`,
         updateData,
         {
           headers: {
@@ -54,16 +54,17 @@ export default async function handler(req, res) {
   } else if (req.method === 'DELETE') {
     try {
       const response = await axios.delete(
-        supabaseUrl + `utenti?id=eq.${id}`,
+        `${supabaseUrl}utenti?id=eq.${id}`,
         {
           headers: {
             apikey: supabaseApiKey,
             Authorization: `Bearer ${supabaseApiKey}`,
+            Prefer: "return=representation"
           }
         }
       );
 
-      res.status(204).end(); // Nessun contenuto (successo cancellazione)
+      res.status(204).end(); // Nessun contenuto = eliminazione riuscita
 
     } catch (err) {
       console.error('Errore DELETE utenti:', err.response?.data || err.message);
