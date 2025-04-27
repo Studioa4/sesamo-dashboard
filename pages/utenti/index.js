@@ -191,7 +191,20 @@ export default function Utenti() {
               </label>
             </div>
 
-            <input type="text" name="ruolo" placeholder="Ruolo" value={form.ruolo} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <select
+  name="ruolo"
+  value={form.ruolo}
+  onChange={handleChange}
+  className="border p-2 mb-4 w-full"
+  required
+>
+  <option value="">Seleziona Ruolo</option>
+  <option value="amministratore">Amministratore</option>
+  <option value="fornitore">Fornitore</option>
+  <option value="proprietario">Proprietario</option>
+  <option value="sottoutente">Sottoutente</option>
+</select>
+
 
             <div className="flex justify-end gap-4">
               <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>
