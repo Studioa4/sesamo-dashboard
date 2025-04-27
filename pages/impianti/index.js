@@ -7,16 +7,19 @@ import Modal from '../../components/Modal';
 export default function Impianti() {
   const router = useRouter();
   const [impianti, setImpianti] = useState([]);
+  const [amministratori, setAmministratori] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingImpianto, setEditingImpianto] = useState(null);
   const [form, setForm] = useState({
     nome: '',
     indirizzo: '',
-    codice_attivazione: ''
+    codice_attivazione: '',
+    amministratore_id: ''
   });
 
   useEffect(() => {
     fetchImpianti();
+    fetchAmministratori();
   }, []);
 
   const fetchImpianti = async () => {
@@ -28,10 +31,20 @@ export default function Impianti() {
     }
   };
 
+  const fetchAmministratori = async () => {
+    try {
+      const res = await axios.get('/utenti');
+      const adminUsers = res.data.filter(u => u.superadmin === true);
+      setAmministratori(adminUsers);
+    } catch (err) {
+      console.error('Errore caricamento amministratori:', err.response?.data || err.message);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo impianto?')) return;
     try {
-      await axios.delete(`/impianti/${id}`);
+      await axios.delete(`/api/impianti/${id}`);
       fetchImpianti();
     } catch (err) {
       console.error('Errore eliminazione impianto:', err.response?.data || err.message);
@@ -39,7 +52,7 @@ export default function Impianti() {
   };
 
   const openModalForAdd = () => {
-    setForm({ nome: '', indirizzo: '', codice_attivazione: '' });
+    setForm({ nome: '', indirizzo: '', codice_attivazione: '', amministratore_id: '' });
     setEditingImpianto(null);
     setShowModal(true);
   };
@@ -47,8 +60,9 @@ export default function Impianti() {
   const openModalForEdit = (impianto) => {
     setForm({
       nome: impianto.nome,
-      indirizzo: impianto.indirizzo,
-      codice_attivazione: impianto.codice_attivazione || ''
+      indirizzo: impianto.indirizzo || '',
+      codice_attivazione: impianto.codice_attivazione || '',
+      amministratore_id: impianto.amministratore_id || ''
     });
     setEditingImpianto(impianto.id);
     setShowModal(true);
@@ -62,9 +76,9 @@ export default function Impianti() {
     e.preventDefault();
     try {
       if (editingImpianto) {
-        await axios.put(`/impianti/${editingImpianto}`, form);
+        await axios.put(`/api/impianti/${editingImpianto}`, form);
       } else {
-        await axios.post('/impianti', form);
+        await axios.post('/api/impianti', form);
       }
       setShowModal(false);
       fetchImpianti();
@@ -96,6 +110,7 @@ export default function Impianti() {
                   <th className="p-4 text-left">Nome</th>
                   <th className="p-4 text-left">Indirizzo</th>
                   <th className="p-4 text-left">Codice Attivazione</th>
+                  <th className="p-4 text-left">Amministratore</th>
                   <th className="p-4 text-left">Azioni</th>
                 </tr>
               </thead>
@@ -105,6 +120,7 @@ export default function Impianti() {
                     <td className="p-4">{impianto.nome}</td>
                     <td className="p-4">{impianto.indirizzo}</td>
                     <td className="p-4">{impianto.codice_attivazione}</td>
+                    <td className="p-4">{impianto.amministratore_id}</td>
                     <td className="p-4 flex gap-2">
                       <button
                         onClick={() => openModalForEdit(impianto)}
@@ -155,6 +171,20 @@ export default function Impianti() {
               onChange={handleChange}
               className="border p-2 mb-4 w-full"
             />
+            <select
+              name="amministratore_id"
+              value={form.amministratore_id}
+              onChange={handleChange}
+              className="border p-2 mb-4 w-full"
+              required
+            >
+              <option value="">Seleziona Amministratore</option>
+              {amministratori.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.nome} {user.cognome}
+                </option>
+              ))}
+            </select>
             <div className="flex justify-end gap-4">
               <button
                 type="button"
