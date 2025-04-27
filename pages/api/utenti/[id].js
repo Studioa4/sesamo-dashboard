@@ -53,24 +53,21 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'DELETE') {
     try {
-      // Patch per eliminazione "logica" (soft delete)
-      const response = await axios.patch(
+      const response = await axios.delete(
         `${supabaseUrl}utenti?id=eq.${id}`,
-        { attivo: false }, // Disattiviamo l'utente
         {
           headers: {
             apikey: supabaseApiKey,
             Authorization: `Bearer ${supabaseApiKey}`,
-            "Content-Type": "application/json",
             Prefer: "return=representation"
           }
         }
       );
 
-      res.status(200).json({ message: 'Utente disattivato con successo!' });
+      res.status(204).end(); // Nessun contenuto = eliminazione riuscita
 
     } catch (err) {
-      console.error('Errore PATCH elimina utenti:', err.response?.data || err.message);
+      console.error('Errore DELETE utenti:', err.response?.data || err.message);
       res.status(500).json({ error: 'Errore eliminazione utente' });
     }
   } else {
