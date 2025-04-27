@@ -57,11 +57,14 @@ export default async function handler(req, res) {
       );
 
       res.status(201).json({ message: 'Utente creato con successo!', utente: response.data[0] });
-    } catch (err) {
-      console.error('Errore POST utenti:', err.response?.data || err.message);
-      res.status(500).json({ error: 'Errore creazione utente' });
-    }
-  }
+      catch (err) {
+        console.error('Errore POST utenti DETTAGLIATO:', JSON.stringify(err.response?.data || err.message, null, 2));
+        res.status(500).json({ 
+          error: 'Errore creazione utente',
+          dettagli: err.response?.data || err.message 
+        });
+      }
+      
 
   if (req.method !== 'GET' && req.method !== 'POST') {
     res.status(405).json({ error: 'Metodo non consentito' });
