@@ -11,9 +11,12 @@ export default function Impianti() {
   const [showModal, setShowModal] = useState(false);
   const [editingImpianto, setEditingImpianto] = useState(null);
   const [form, setForm] = useState({
-    nome: '',
+    denominazione: '',
     indirizzo: '',
-    codice_attivazione: '',
+    citta: '',
+    provincia: '',
+    latitudine: '',
+    longitudine: '',
     amministratore_id: ''
   });
 
@@ -52,16 +55,27 @@ export default function Impianti() {
   };
 
   const openModalForAdd = () => {
-    setForm({ nome: '', indirizzo: '', codice_attivazione: '', amministratore_id: '' });
+    setForm({
+      denominazione: '',
+      indirizzo: '',
+      citta: '',
+      provincia: '',
+      latitudine: '',
+      longitudine: '',
+      amministratore_id: ''
+    });
     setEditingImpianto(null);
     setShowModal(true);
   };
 
   const openModalForEdit = (impianto) => {
     setForm({
-      nome: impianto.nome,
+      denominazione: impianto.denominazione,
       indirizzo: impianto.indirizzo || '',
-      codice_attivazione: impianto.codice_attivazione || '',
+      citta: impianto.citta || '',
+      provincia: impianto.provincia || '',
+      latitudine: impianto.latitudine || '',
+      longitudine: impianto.longitudine || '',
       amministratore_id: impianto.amministratore_id || ''
     });
     setEditingImpianto(impianto.id);
@@ -107,9 +121,12 @@ export default function Impianti() {
             <table className="min-w-full bg-white rounded shadow">
               <thead className="bg-blue-600 text-white">
                 <tr>
-                  <th className="p-4 text-left">Nome</th>
+                  <th className="p-4 text-left">Denominazione</th>
                   <th className="p-4 text-left">Indirizzo</th>
-                  <th className="p-4 text-left">Codice Attivazione</th>
+                  <th className="p-4 text-left">Città</th>
+                  <th className="p-4 text-left">Provincia</th>
+                  <th className="p-4 text-left">Latitudine</th>
+                  <th className="p-4 text-left">Longitudine</th>
                   <th className="p-4 text-left">Amministratore</th>
                   <th className="p-4 text-left">Azioni</th>
                 </tr>
@@ -117,9 +134,12 @@ export default function Impianti() {
               <tbody>
                 {impianti.map((impianto) => (
                   <tr key={impianto.id} className="hover:bg-blue-50">
-                    <td className="p-4">{impianto.nome}</td>
+                    <td className="p-4">{impianto.denominazione}</td>
                     <td className="p-4">{impianto.indirizzo}</td>
-                    <td className="p-4">{impianto.codice_attivazione}</td>
+                    <td className="p-4">{impianto.citta}</td>
+                    <td className="p-4">{impianto.provincia}</td>
+                    <td className="p-4">{impianto.latitudine}</td>
+                    <td className="p-4">{impianto.longitudine}</td>
                     <td className="p-4">{impianto.amministratore_id}</td>
                     <td className="p-4 flex gap-2">
                       <button
@@ -146,38 +166,13 @@ export default function Impianti() {
       {showModal && (
         <Modal title={editingImpianto ? "Modifica Impianto" : "Aggiungi Impianto"} onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="nome"
-              placeholder="Nome"
-              value={form.nome}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            />
-            <input
-              type="text"
-              name="indirizzo"
-              placeholder="Indirizzo"
-              value={form.indirizzo}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-            />
-            <input
-              type="text"
-              name="codice_attivazione"
-              placeholder="Codice Attivazione"
-              value={form.codice_attivazione}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-            />
-            <select
-              name="amministratore_id"
-              value={form.amministratore_id}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            >
+            <input type="text" name="denominazione" placeholder="Denominazione" value={form.denominazione} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+            <input type="text" name="indirizzo" placeholder="Indirizzo" value={form.indirizzo} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="citta" placeholder="Città" value={form.citta} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="provincia" placeholder="Provincia" value={form.provincia} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="latitudine" placeholder="Latitudine" value={form.latitudine} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="longitudine" placeholder="Longitudine" value={form.longitudine} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <select name="amministratore_id" value={form.amministratore_id} onChange={handleChange} className="border p-2 mb-4 w-full" required>
               <option value="">Seleziona Amministratore</option>
               {amministratori.map((user) => (
                 <option key={user.id} value={user.id}>
@@ -185,20 +180,10 @@ export default function Impianti() {
                 </option>
               ))}
             </select>
+
             <div className="flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={() => setShowModal(false)}
-                className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400"
-              >
-                Annulla
-              </button>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-              >
-                Salva
-              </button>
+              <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>
+              <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Salva</button>
             </div>
           </form>
         </Modal>

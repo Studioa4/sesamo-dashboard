@@ -1,6 +1,4 @@
-// /pages/utenti/index.js
-
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from '../../lib/axiosClient';
 import Layout from '../../components/Layout';
@@ -9,7 +7,6 @@ import Modal from '../../components/Modal';
 export default function Utenti() {
   const router = useRouter();
   const [utenti, setUtenti] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUtente, setEditingUtente] = useState(null);
   const [form, setForm] = useState({
@@ -17,39 +14,34 @@ export default function Utenti() {
     cognome: '',
     cellulare: '',
     email: '',
+    indirizzo: '',
+    citta: '',
+    provincia: '',
+    stato: '',
     password: '',
+    attivo: true,
+    superadmin: false,
     ruolo: ''
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-    } else {
-      fetchUtenti(token);
-    }
+    fetchUtenti();
   }, []);
 
-  const fetchUtenti = async (token) => {
+  const fetchUtenti = async () => {
     try {
-      const res = await axios.get('/utenti', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get('/utenti');
       setUtenti(res.data);
     } catch (err) {
       console.error('Errore caricamento utenti:', err.response?.data || err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleDelete = async (utenteId) => {
+  const handleDelete = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo utente?')) return;
     try {
-      await axios.delete(`/utenti/${utenteId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      fetchUtenti(localStorage.getItem('token'));
+      await axios.delete(`/api/utenti/${id}`);
+      fetchUtenti();
     } catch (err) {
       console.error('Errore eliminazione utente:', err.response?.data || err.message);
     }
@@ -61,7 +53,13 @@ export default function Utenti() {
       cognome: '',
       cellulare: '',
       email: '',
+      indirizzo: '',
+      citta: '',
+      provincia: '',
+      stato: '',
       password: '',
+      attivo: true,
+      superadmin: false,
       ruolo: ''
     });
     setEditingUtente(null);
@@ -74,7 +72,13 @@ export default function Utenti() {
       cognome: utente.cognome,
       cellulare: utente.cellulare,
       email: utente.email,
+      indirizzo: utente.indirizzo || '',
+      citta: utente.citta || '',
+      provincia: utente.provincia || '',
+      stato: utente.stato || '',
       password: '',
+      attivo: utente.attivo,
+      superadmin: utente.superadmin,
       ruolo: utente.ruolo || ''
     });
     setEditingUtente(utente.id);
@@ -82,39 +86,24 @@ export default function Utenti() {
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, type, value, checked } = e.target;
+    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editingUtente) {
-        // Modifica
-        await axios.put(`/utenti/${editingUtente}`, form, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
+        await axios.put(`/api/utenti/${editingUtente}`, form);
       } else {
-        // Aggiunta
-        await axios.post('/utenti', form, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
+        await axios.post('/api/utenti', form);
       }
       setShowModal(false);
-      fetchUtenti(localStorage.getItem('token'));
+      fetchUtenti();
     } catch (err) {
       console.error('Errore salvataggio utente:', err.response?.data || err.message);
     }
   };
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center min-h-screen">
-          <p>Caricamento utenti...</p>
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
@@ -140,6 +129,9 @@ export default function Utenti() {
                   <th className="p-4 text-left">Cognome</th>
                   <th className="p-4 text-left">Cellulare</th>
                   <th className="p-4 text-left">Email</th>
+                  <th className="p-4 text-left">Ruolo</th>
+                  <th className="p-4 text-left">Superadmin</th>
+                  <th className="p-4 text-left">Attivo</th>
                   <th className="p-4 text-left">Azioni</th>
                 </tr>
               </thead>
@@ -150,6 +142,9 @@ export default function Utenti() {
                     <td className="p-4">{utente.cognome}</td>
                     <td className="p-4">{utente.cellulare}</td>
                     <td className="p-4">{utente.email}</td>
+                    <td className="p-4">{utente.ruolo}</td>
+                    <td className="p-4">{utente.superadmin ? '✅' : '❌'}</td>
+                    <td className="p-4">{utente.attivo ? '✅' : '❌'}</td>
                     <td className="p-4 flex gap-2">
                       <button
                         onClick={() => openModalForEdit(utente)}
@@ -172,82 +167,35 @@ export default function Utenti() {
         )}
       </div>
 
-      {/* Modal per Aggiungi/Modifica */}
       {showModal && (
         <Modal title={editingUtente ? "Modifica Utente" : "Aggiungi Utente"} onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="nome"
-              placeholder="Nome"
-              value={form.nome}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            />
-            <input
-              type="text"
-              name="cognome"
-              placeholder="Cognome"
-              value={form.cognome}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            />
-            <input
-              type="text"
-              name="cellulare"
-              placeholder="Cellulare"
-              value={form.cellulare}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Nuova Password (opzionale)"
-              value={form.password}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-            />
-            <select
-              name="ruolo"
-              value={form.ruolo}
-              onChange={handleChange}
-              className="border p-2 mb-4 w-full"
-              required
-            >
-              <option value="">-- Seleziona Ruolo --</option>
-              <option value="amministratore">Amministratore</option>
-              <option value="fornitore">Fornitore</option>
-              <option value="proprietario">Proprietario</option>
-              <option value="sottoutente">Sottoutente</option>
-            </select>
+            <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+            <input type="text" name="cognome" placeholder="Cognome" value={form.cognome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+            <input type="text" name="cellulare" placeholder="Cellulare" value={form.cellulare} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+            <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+            <input type="text" name="indirizzo" placeholder="Indirizzo" value={form.indirizzo} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="citta" placeholder="Città" value={form.citta} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="provincia" placeholder="Provincia" value={form.provincia} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="stato" placeholder="Stato" value={form.stato} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="password" name="password" placeholder="Password (solo se vuoi cambiarla)" value={form.password} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            
+            <div className="flex gap-4 mb-4">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" name="attivo" checked={form.attivo} onChange={handleChange} />
+                Attivo
+              </label>
+              <label className="flex items-center gap-2">
+                <input type="checkbox" name="superadmin" checked={form.superadmin} onChange={handleChange} />
+                Superadmin
+              </label>
+            </div>
+
+            <input type="text" name="ruolo" placeholder="Ruolo" value={form.ruolo} onChange={handleChange} className="border p-2 mb-4 w-full" />
 
             <div className="flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={() => setShowModal(false)}
-                className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400"
-              >
-                Annulla
-              </button>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-              >
-                Salva
-              </button>
+              <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>
+              <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Salva</button>
             </div>
           </form>
         </Modal>
