@@ -20,7 +20,7 @@ export default function Varchi() {
 
   const fetchVarchi = async () => {
     try {
-      const res = await axios.get('/api/varchi');
+      const res = await axios.get('/varchi');
       setVarchi(res.data);
     } catch (err) {
       console.error('Errore caricamento varchi:', err.response?.data || err.message);
@@ -30,7 +30,7 @@ export default function Varchi() {
   const handleDelete = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo varco?')) return;
     try {
-      await axios.delete(`/api/varchi/${id}`);
+      await axios.delete(`/varchi/${id}`);
       fetchVarchi();
     } catch (err) {
       console.error('Errore eliminazione varco:', err.response?.data || err.message);
@@ -60,9 +60,9 @@ export default function Varchi() {
     e.preventDefault();
     try {
       if (editingVarco) {
-        await axios.put(`/api/varchi/${editingVarco}`, form);
+        await axios.put(`/varchi/${editingVarco}`, form);
       } else {
-        await axios.post('/api/varchi', form);
+        await axios.post('/varchi', form);
       }
       setShowModal(false);
       fetchVarchi();
