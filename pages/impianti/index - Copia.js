@@ -44,7 +44,7 @@ export default function Impianti() {
   const handleDelete = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo impianto?')) return;
     try {
-      await axios.delete(`/api/impianti/${id}`);
+      await axios.delete(`/impianti/${id}`);
       fetchImpianti();
     } catch (err) {
       console.error('Errore eliminazione impianto:', err.response?.data || err.message);
@@ -76,9 +76,9 @@ export default function Impianti() {
     e.preventDefault();
     try {
       if (editingImpianto) {
-        await axios.put(`/api/impianti/${editingImpianto}`, form);
+        await axios.put(`/impianti/${editingImpianto}`, form);
       } else {
-        await axios.post('/api/impianti', form);
+        await axios.post('/impianti', form);
       }
       setShowModal(false);
       fetchImpianti();

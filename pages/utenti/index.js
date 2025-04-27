@@ -40,7 +40,7 @@ export default function Utenti() {
   const handleDelete = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo utente?')) return;
     try {
-      await axios.delete(`/api/utenti/${id}`);
+      await axios.delete(`/utenti/${id}`);
       fetchUtenti();
     } catch (err) {
       console.error('Errore eliminazione utente:', err.response?.data || err.message);
@@ -94,9 +94,9 @@ export default function Utenti() {
     e.preventDefault();
     try {
       if (editingUtente) {
-        await axios.put(`/api/utenti/${editingUtente}`, form);
+        await axios.put(`/utenti/${editingUtente}`, form);
       } else {
-        await axios.post('/api/utenti', form);
+        await axios.post('/utenti', form);
       }
       setShowModal(false);
       fetchUtenti();
