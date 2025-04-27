@@ -63,6 +63,7 @@ export default function Layout({ children }) {
             onClick={() => {
               localStorage.removeItem('token');
               localStorage.removeItem('superadmin');
+              localStorage.clear(); // ✅ Pulisce tutto
               window.location.href = '/login';
             }}
             className="mt-auto flex items-center space-x-2 hover:underline text-sm"
