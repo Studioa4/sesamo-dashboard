@@ -125,8 +125,6 @@ export default function Impianti() {
                   <th className="p-4 text-left">Indirizzo</th>
                   <th className="p-4 text-left">Città</th>
                   <th className="p-4 text-left">Provincia</th>
-                  <th className="p-4 text-left">Latitudine</th>
-                  <th className="p-4 text-left">Longitudine</th>
                   <th className="p-4 text-left">Amministratore</th>
                   <th className="p-4 text-left">Azioni</th>
                 </tr>
@@ -138,8 +136,6 @@ export default function Impianti() {
                     <td className="p-4">{impianto.indirizzo}</td>
                     <td className="p-4">{impianto.citta}</td>
                     <td className="p-4">{impianto.provincia}</td>
-                    <td className="p-4">{impianto.latitudine}</td>
-                    <td className="p-4">{impianto.longitudine}</td>
                     <td className="p-4">{impianto.amministratore_id}</td>
                     <td className="p-4 flex gap-2">
                       <button
@@ -170,8 +166,8 @@ export default function Impianti() {
             <input type="text" name="indirizzo" placeholder="Indirizzo" value={form.indirizzo} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <input type="text" name="citta" placeholder="Città" value={form.citta} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <input type="text" name="provincia" placeholder="Provincia" value={form.provincia} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            <input type="text" name="latitudine" placeholder="Latitudine" value={form.latitudine} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            <input type="text" name="longitudine" placeholder="Longitudine" value={form.longitudine} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="latitudine" placeholder="Latitudine (opzionale)" value={form.latitudine} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="longitudine" placeholder="Longitudine (opzionale)" value={form.longitudine} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <select name="amministratore_id" value={form.amministratore_id} onChange={handleChange} className="border p-2 mb-4 w-full" required>
               <option value="">Seleziona Amministratore</option>
               {amministratori.map((user) => (

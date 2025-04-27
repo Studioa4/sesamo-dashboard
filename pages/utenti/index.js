@@ -71,7 +71,7 @@ export default function Utenti() {
       nome: utente.nome,
       cognome: utente.cognome,
       cellulare: utente.cellulare,
-      email: utente.email,
+      email: utente.email || '',
       indirizzo: utente.indirizzo || '',
       citta: utente.citta || '',
       provincia: utente.provincia || '',
@@ -173,13 +173,13 @@ export default function Utenti() {
             <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
             <input type="text" name="cognome" placeholder="Cognome" value={form.cognome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
             <input type="text" name="cellulare" placeholder="Cellulare" value={form.cellulare} onChange={handleChange} className="border p-2 mb-4 w-full" required />
-            <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+            <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <input type="text" name="indirizzo" placeholder="Indirizzo" value={form.indirizzo} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <input type="text" name="citta" placeholder="Città" value={form.citta} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <input type="text" name="provincia" placeholder="Provincia" value={form.provincia} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <input type="text" name="stato" placeholder="Stato" value={form.stato} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <input type="password" name="password" placeholder="Password (solo se vuoi cambiarla)" value={form.password} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            
+
             <div className="flex gap-4 mb-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" name="attivo" checked={form.attivo} onChange={handleChange} />
@@ -191,20 +191,13 @@ export default function Utenti() {
               </label>
             </div>
 
-            <select
-  name="ruolo"
-  value={form.ruolo}
-  onChange={handleChange}
-  className="border p-2 mb-4 w-full"
-  required
->
-  <option value="">Seleziona Ruolo</option>
-  <option value="amministratore">Amministratore</option>
-  <option value="fornitore">Fornitore</option>
-  <option value="proprietario">Proprietario</option>
-  <option value="sottoutente">Sottoutente</option>
-</select>
-
+            <select name="ruolo" value={form.ruolo} onChange={handleChange} className="border p-2 mb-4 w-full" required>
+              <option value="">Seleziona Ruolo</option>
+              <option value="amministratore">Amministratore</option>
+              <option value="fornitore">Fornitore</option>
+              <option value="proprietario">Proprietario</option>
+              <option value="sottoutente">Sottoutente</option>
+            </select>
 
             <div className="flex justify-end gap-4">
               <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>

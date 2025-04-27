@@ -142,7 +142,7 @@ export default function Varchi() {
         <Modal title={editingVarco ? "Modifica Varco" : "Aggiungi Varco"} onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit}>
             <input type="text" name="denominazione" placeholder="Denominazione" value={form.denominazione} onChange={handleChange} className="border p-2 mb-4 w-full" required />
-            <input type="text" name="codice_attivazione" placeholder="Codice Attivazione" value={form.codice_attivazione} onChange={handleChange} className="border p-2 mb-4 w-full" />
+            <input type="text" name="codice_attivazione" placeholder="Codice Attivazione (opzionale)" value={form.codice_attivazione} onChange={handleChange} className="border p-2 mb-4 w-full" />
             <select
               name="impianto_id"
               value={form.impianto_id}
