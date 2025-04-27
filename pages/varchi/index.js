@@ -7,6 +7,7 @@ import Modal from '../../components/Modal';
 export default function Varchi() {
   const router = useRouter();
   const [varchi, setVarchi] = useState([]);
+  const [impianti, setImpianti] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingVarco, setEditingVarco] = useState(null);
   const [form, setForm] = useState({
@@ -16,6 +17,7 @@ export default function Varchi() {
 
   useEffect(() => {
     fetchVarchi();
+    fetchImpianti();
   }, []);
 
   const fetchVarchi = async () => {
@@ -27,10 +29,19 @@ export default function Varchi() {
     }
   };
 
+  const fetchImpianti = async () => {
+    try {
+      const res = await axios.get('/impianti');
+      setImpianti(res.data);
+    } catch (err) {
+      console.error('Errore caricamento impianti:', err.response?.data || err.message);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo varco?')) return;
     try {
-      await axios.delete(`/varchi/${id}`);
+      await axios.delete(`/api/varchi/${id}`);
       fetchVarchi();
     } catch (err) {
       console.error('Errore eliminazione varco:', err.response?.data || err.message);
@@ -60,9 +71,9 @@ export default function Varchi() {
     e.preventDefault();
     try {
       if (editingVarco) {
-        await axios.put(`/varchi/${editingVarco}`, form);
+        await axios.put(`/api/varchi/${editingVarco}`, form);
       } else {
-        await axios.post('/varchi', form);
+        await axios.post('/api/varchi', form);
       }
       setShowModal(false);
       fetchVarchi();
@@ -92,7 +103,7 @@ export default function Varchi() {
               <thead className="bg-blue-600 text-white">
                 <tr>
                   <th className="p-4 text-left">Nome Varco</th>
-                  <th className="p-4 text-left">Impianto ID</th>
+                  <th className="p-4 text-left">Impianto</th>
                   <th className="p-4 text-left">Azioni</th>
                 </tr>
               </thead>
@@ -135,15 +146,20 @@ export default function Varchi() {
               className="border p-2 mb-4 w-full"
               required
             />
-            <input
-              type="text"
+            <select
               name="impianto_id"
-              placeholder="ID Impianto"
               value={form.impianto_id}
               onChange={handleChange}
               className="border p-2 mb-4 w-full"
               required
-            />
+            >
+              <option value="">Seleziona Impianto</option>
+              {impianti.map((impianto) => (
+                <option key={impianto.id} value={impianto.id}>
+                  {impianto.nome}
+                </option>
+              ))}
+            </select>
             <div className="flex justify-end gap-4">
               <button
                 type="button"
