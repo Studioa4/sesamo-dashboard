@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import axios from '../../lib/axiosClient';
 import Layout from '../../components/Layout';
 import Modal from '../../components/Modal';
 
 export default function Utenti() {
-  const router = useRouter();
   const [utenti, setUtenti] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingUtente, setEditingUtente] = useState(null);
@@ -129,6 +127,10 @@ export default function Utenti() {
                   <th className="p-4 text-left">Cognome</th>
                   <th className="p-4 text-left">Cellulare</th>
                   <th className="p-4 text-left">Email</th>
+                  <th className="p-4 text-left">Indirizzo</th>
+                  <th className="p-4 text-left">Città</th>
+                  <th className="p-4 text-left">Provincia</th>
+                  <th className="p-4 text-left">Stato</th>
                   <th className="p-4 text-left">Ruolo</th>
                   <th className="p-4 text-left">Superadmin</th>
                   <th className="p-4 text-left">Attivo</th>
@@ -142,6 +144,10 @@ export default function Utenti() {
                     <td className="p-4">{utente.cognome}</td>
                     <td className="p-4">{utente.cellulare}</td>
                     <td className="p-4">{utente.email}</td>
+                    <td className="p-4">{utente.indirizzo}</td>
+                    <td className="p-4">{utente.citta}</td>
+                    <td className="p-4">{utente.provincia}</td>
+                    <td className="p-4">{utente.stato}</td>
                     <td className="p-4">{utente.ruolo}</td>
                     <td className="p-4">{utente.superadmin ? '✅' : '❌'}</td>
                     <td className="p-4">{utente.attivo ? '✅' : '❌'}</td>

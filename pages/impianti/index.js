@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import axios from '../../lib/axiosClient';
 import Layout from '../../components/Layout';
 import Modal from '../../components/Modal';
 
 export default function Impianti() {
-  const router = useRouter();
   const [impianti, setImpianti] = useState([]);
   const [amministratori, setAmministratori] = useState([]);
   const [showModal, setShowModal] = useState(false);
