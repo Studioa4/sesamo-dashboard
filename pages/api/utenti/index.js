@@ -11,7 +11,25 @@ const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === 'GET') {
+    try {
+      const response = await axios.get(
+        supabaseUrl + 'utenti',
+        {
+          headers: {
+            apikey: supabaseApiKey,
+            Authorization: `Bearer ${supabaseApiKey}`
+          }
+        }
+      );
+      res.status(200).json(response.data);
+    } catch (err) {
+      console.error('Errore caricamento utenti:', JSON.stringify(err.response?.data || err.message, null, 2));
+      res.status(500).json({ error: 'Errore caricamento utenti' });
+    }
+  }
+  
+  else if (req.method === 'POST') {
     const { nome, cognome, cellulare, email, ruolo } = req.body;
 
     if (!nome || !cognome || !cellulare || !email || !ruolo) {
@@ -49,7 +67,6 @@ export default async function handler(req, res) {
         }
       );
 
-      // Invia email di conferma
       const transporter = nodemailer.createTransport({
         host: smtpHost,
         port: smtpPort,
@@ -87,7 +104,9 @@ export default async function handler(req, res) {
         res.status(500).json({ error: err.message });
       }
     }
-  } else {
+  }
+
+  else {
     res.status(405).json({ error: 'Metodo non consentito' });
   }
 }
