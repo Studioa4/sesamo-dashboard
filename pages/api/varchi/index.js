@@ -4,7 +4,24 @@ const supabaseUrl = process.env.SUPABASE_URL + '/rest/v1/';
 const supabaseApiKey = process.env.SUPABASE_ANON_KEY;
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === 'GET') {
+    try {
+      const response = await axios.get(
+        supabaseUrl + 'varchi',
+        {
+          headers: {
+            apikey: supabaseApiKey,
+            Authorization: `Bearer ${supabaseApiKey}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      res.status(200).json(response.data);
+    } catch (err) {
+      console.error('Errore caricamento varchi:', err.response?.data || err.message);
+      res.status(500).json({ error: 'Errore caricamento varchi' });
+    }
+  } else if (req.method === 'POST') {
     const { denominazione, impianto_id } = req.body;
 
     if (!denominazione || !impianto_id) {

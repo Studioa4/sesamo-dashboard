@@ -5,7 +5,25 @@ const supabaseUrl = process.env.SUPABASE_URL + '/rest/v1/';
 const supabaseApiKey = process.env.SUPABASE_ANON_KEY;
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === 'GET') {
+    try {
+      const response = await axios.get(
+        supabaseUrl + 'utenti',
+        {
+          headers: {
+            apikey: supabaseApiKey,
+            Authorization: `Bearer ${supabaseApiKey}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      res.status(200).json(response.data);
+    } catch (err) {
+      console.error('Errore caricamento utenti:', err.response?.data || err.message);
+      res.status(500).json({ error: 'Errore caricamento utenti' });
+    }
+  } 
+  else if (req.method === 'POST') {
     const { nome, cognome, cellulare, email, ruolo, password } = req.body;
 
     if (!nome || !cognome || !cellulare || !email || !ruolo) {
@@ -51,7 +69,8 @@ export default async function handler(req, res) {
       console.error('Errore creazione utente:', err.response?.data || err.message);
       res.status(500).json({ error: 'Errore creazione utente' });
     }
-  } else {
+  } 
+  else {
     res.status(405).json({ error: 'Metodo non consentito' });
   }
 }
