@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from '../../lib/axiosClient';
 import Layout from '../../components/Layout';
 import Modal from '../../components/Modal';
+import DataTable from '../../components/DataTable';
 
 export default function Utenti() {
   const [utenti, setUtenti] = useState([]);
@@ -34,6 +35,20 @@ export default function Utenti() {
       console.error('Errore caricamento utenti:', err.response?.data || err.message);
     }
   };
+
+  const columns = [
+    { label: 'Nome', accessor: 'nome' },
+    { label: 'Cognome', accessor: 'cognome' },
+    { label: 'Cellulare', accessor: 'cellulare' },
+    { label: 'Email', accessor: 'email' },
+    { label: 'Indirizzo', accessor: 'indirizzo' },
+    { label: 'Città', accessor: 'citta' },
+    { label: 'Provincia', accessor: 'provincia' },
+    { label: 'Stato', accessor: 'stato' },
+    { label: 'Ruolo', accessor: 'ruolo' },
+    { label: 'Superadmin', accessor: 'superadmin' },
+    { label: 'Attivo', accessor: 'attivo' },
+  ];
 
   const handleDelete = async (id) => {
     if (!confirm('Sei sicuro di voler eliminare questo utente?')) return;
@@ -116,102 +131,48 @@ export default function Utenti() {
           </button>
         </div>
 
-        {utenti.length === 0 ? (
-          <p>Nessun utente trovato.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded shadow">
-              <thead className="bg-blue-600 text-white">
-                <tr>
-                  <th className="p-4 text-left">Nome</th>
-                  <th className="p-4 text-left">Cognome</th>
-                  <th className="p-4 text-left">Cellulare</th>
-                  <th className="p-4 text-left">Email</th>
-                  <th className="p-4 text-left">Indirizzo</th>
-                  <th className="p-4 text-left">Città</th>
-                  <th className="p-4 text-left">Provincia</th>
-                  <th className="p-4 text-left">Stato</th>
-                  <th className="p-4 text-left">Ruolo</th>
-                  <th className="p-4 text-left">Superadmin</th>
-                  <th className="p-4 text-left">Attivo</th>
-                  <th className="p-4 text-left">Azioni</th>
-                </tr>
-              </thead>
-              <tbody>
-                {utenti.map((utente) => (
-                  <tr key={utente.id} className="hover:bg-blue-50">
-                    <td className="p-4">{utente.nome}</td>
-                    <td className="p-4">{utente.cognome}</td>
-                    <td className="p-4">{utente.cellulare}</td>
-                    <td className="p-4">{utente.email}</td>
-                    <td className="p-4">{utente.indirizzo}</td>
-                    <td className="p-4">{utente.citta}</td>
-                    <td className="p-4">{utente.provincia}</td>
-                    <td className="p-4">{utente.stato}</td>
-                    <td className="p-4">{utente.ruolo}</td>
-                    <td className="p-4">{utente.superadmin ? '✅' : '❌'}</td>
-                    <td className="p-4">{utente.attivo ? '✅' : '❌'}</td>
-                    <td className="p-4 flex gap-2">
-                      <button
-                        onClick={() => openModalForEdit(utente)}
-                        className="bg-yellow-400 text-white px-2 py-1 rounded text-xs hover:bg-yellow-500"
-                      >
-                        ✏️ Modifica
-                      </button>
-                      <button
-                        onClick={() => handleDelete(utente.id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
-                      >
-                        🗑️ Elimina
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <DataTable columns={columns} data={utenti} />
+
+        {showModal && (
+          <Modal title={editingUtente ? "Modifica Utente" : "Aggiungi Utente"} onClose={() => setShowModal(false)}>
+            <form onSubmit={handleSubmit}>
+              <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+              <input type="text" name="cognome" placeholder="Cognome" value={form.cognome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+              <input type="text" name="cellulare" placeholder="Cellulare" value={form.cellulare} onChange={handleChange} className="border p-2 mb-4 w-full" required />
+              <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} className="border p-2 mb-4 w-full" />
+              <input type="text" name="indirizzo" placeholder="Indirizzo" value={form.indirizzo} onChange={handleChange} className="border p-2 mb-4 w-full" />
+              <input type="text" name="citta" placeholder="Città" value={form.citta} onChange={handleChange} className="border p-2 mb-4 w-full" />
+              <input type="text" name="provincia" placeholder="Provincia" value={form.provincia} onChange={handleChange} className="border p-2 mb-4 w-full" />
+              <input type="text" name="stato" placeholder="Stato" value={form.stato} onChange={handleChange} className="border p-2 mb-4 w-full" />
+              <input type="password" name="password" placeholder="Password (solo se vuoi cambiarla)" value={form.password} onChange={handleChange} className="border p-2 mb-4 w-full" />
+
+              <div className="flex gap-4 mb-4">
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" name="attivo" checked={form.attivo} onChange={handleChange} />
+                  Attivo
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" name="superadmin" checked={form.superadmin} onChange={handleChange} />
+                  Superadmin
+                </label>
+              </div>
+
+              <select name="ruolo" value={form.ruolo} onChange={handleChange} className="border p-2 mb-4 w-full" required>
+                <option value="">Seleziona Ruolo</option>
+                <option value="amministratore">Amministratore</option>
+                <option value="fornitore">Fornitore</option>
+                <option value="proprietario">Proprietario</option>
+                <option value="sottoutente">Sottoutente</option>
+              </select>
+
+              <div className="flex justify-end gap-4">
+                <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>
+                <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Salva</button>
+              </div>
+            </form>
+          </Modal>
         )}
       </div>
-
-      {showModal && (
-        <Modal title={editingUtente ? "Modifica Utente" : "Aggiungi Utente"} onClose={() => setShowModal(false)}>
-          <form onSubmit={handleSubmit}>
-            <input type="text" name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
-            <input type="text" name="cognome" placeholder="Cognome" value={form.cognome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
-            <input type="text" name="cellulare" placeholder="Cellulare" value={form.cellulare} onChange={handleChange} className="border p-2 mb-4 w-full" required />
-            <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            <input type="text" name="indirizzo" placeholder="Indirizzo" value={form.indirizzo} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            <input type="text" name="citta" placeholder="Città" value={form.citta} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            <input type="text" name="provincia" placeholder="Provincia" value={form.provincia} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            <input type="text" name="stato" placeholder="Stato" value={form.stato} onChange={handleChange} className="border p-2 mb-4 w-full" />
-            <input type="password" name="password" placeholder="Password (solo se vuoi cambiarla)" value={form.password} onChange={handleChange} className="border p-2 mb-4 w-full" />
-
-            <div className="flex gap-4 mb-4">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" name="attivo" checked={form.attivo} onChange={handleChange} />
-                Attivo
-              </label>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" name="superadmin" checked={form.superadmin} onChange={handleChange} />
-                Superadmin
-              </label>
-            </div>
-
-            <select name="ruolo" value={form.ruolo} onChange={handleChange} className="border p-2 mb-4 w-full" required>
-              <option value="">Seleziona Ruolo</option>
-              <option value="amministratore">Amministratore</option>
-              <option value="fornitore">Fornitore</option>
-              <option value="proprietario">Proprietario</option>
-              <option value="sottoutente">Sottoutente</option>
-            </select>
-
-            <div className="flex justify-end gap-4">
-              <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>
-              <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Salva</button>
-            </div>
-          </form>
-        </Modal>
-      )}
     </Layout>
   );
 }
