@@ -59,13 +59,10 @@ export default async function handler(req, res) {
 
       res.status(201).json({ message: 'Impianto creato con successo!', impianto: response.data[0] });
 
-    } catch (err) {
-      console.error('Errore creazione impianto:', JSON.stringify(err.response?.data || err.message, null, 2));
-
-      res.status(500).json({ error: 'Errore creazione impianto' });
-    }
-  } 
-  else {
-    res.status(405).json({ error: 'Metodo non consentito' });
-  }
-}
+      catch (err) {
+        if (err.response) {
+          console.error('Errore creazione impianto (dettagli Supabase):', JSON.stringify(err.response.data, null, 2));
+        } else {
+          console.error('Errore creazione impianto (errore locale):', err.message);
+        }
+      }
