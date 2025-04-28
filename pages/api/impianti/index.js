@@ -60,9 +60,12 @@ export default async function handler(req, res) {
       res.status(201).json({ message: 'Impianto creato con successo!', impianto: response.data[0] });
 
       catch (err) {
-        if (err.response) {
+        if (err.response && err.response.data) {
           console.error('Errore creazione impianto (dettagli Supabase):', JSON.stringify(err.response.data, null, 2));
+          res.status(500).json({ error: err.response.data.message || 'Errore creazione impianto', details: err.response.data.details || '' });
         } else {
           console.error('Errore creazione impianto (errore locale):', err.message);
+          res.status(500).json({ error: err.message });
         }
       }
+      
