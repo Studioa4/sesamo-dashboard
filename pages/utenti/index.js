@@ -156,18 +156,31 @@ export default function Utenti() {
               </select>
 
               <div className="flex justify-end gap-4 mt-6">
-                <button type="button" onClick={() => setShowModal(false)} className="bg-gray-400 text-black p-2 rounded hover:bg-gray-500">
-                  Annulla
-                </button>
-                {editingUtente && (
-                  <button type="button" onClick={handleElimina} className="bg-red-500 text-white p-2 rounded hover:bg-red-600">
-                    Elimina
-                  </button>
-                )}
-                <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-                  Conferma
-                </button>
-              </div>
+  <button
+    type="button"
+    onClick={() => setShowModal(false)}
+    className="bg-gray-400 text-black p-2 rounded hover:bg-gray-500"
+  >
+    Annulla
+  </button>
+
+  {editingUtente && (
+    <button
+      type="button"
+      onClick={handleElimina}
+      className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+    >
+      Elimina
+    </button>
+  )}
+
+  <button
+    type="submit"
+    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+  >
+    Conferma
+  </button>
+</div>
             </form>
           </Modal>
         )}
