@@ -41,13 +41,8 @@ export default function Utenti() {
     { label: 'Cognome', accessor: 'cognome' },
     { label: 'Cellulare', accessor: 'cellulare' },
     { label: 'Email', accessor: 'email' },
-    { label: 'Indirizzo', accessor: 'indirizzo' },
-    { label: 'Città', accessor: 'citta' },
-    { label: 'Provincia', accessor: 'provincia' },
-    { label: 'Stato', accessor: 'stato' },
     { label: 'Ruolo', accessor: 'ruolo' },
-    { label: 'Superadmin', accessor: 'superadmin' },
-    { label: 'Attivo', accessor: 'attivo' },
+    { label: 'Attivo', accessor: 'attivo' }
   ];
 
   const handleDelete = async (id) => {
@@ -118,6 +113,18 @@ export default function Utenti() {
     }
   };
 
+  const handleElimina = async () => {
+    if (!editingUtente) return;
+    if (!confirm('Confermi eliminazione utente?')) return;
+    try {
+      await axios.delete(`/utenti/${editingUtente}`);
+      setShowModal(false);
+      fetchUtenti();
+    } catch (err) {
+      console.error('Errore eliminazione utente:', err.response?.data || err.message);
+    }
+  };
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-100 p-6">
@@ -131,7 +138,7 @@ export default function Utenti() {
           </button>
         </div>
 
-        <<DataTable columns={columns} data={utenti} onRowDoubleClick={openModalForEdit} />
+        <DataTable columns={columns} data={utenti} onRowDoubleClick={openModalForEdit} />
 
         {showModal && (
           <Modal title={editingUtente ? "Modifica Utente" : "Aggiungi Utente"} onClose={() => setShowModal(false)}>
@@ -140,23 +147,6 @@ export default function Utenti() {
               <input type="text" name="cognome" placeholder="Cognome" value={form.cognome} onChange={handleChange} className="border p-2 mb-4 w-full" required />
               <input type="text" name="cellulare" placeholder="Cellulare" value={form.cellulare} onChange={handleChange} className="border p-2 mb-4 w-full" required />
               <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} className="border p-2 mb-4 w-full" />
-              <input type="text" name="indirizzo" placeholder="Indirizzo" value={form.indirizzo} onChange={handleChange} className="border p-2 mb-4 w-full" />
-              <input type="text" name="citta" placeholder="Città" value={form.citta} onChange={handleChange} className="border p-2 mb-4 w-full" />
-              <input type="text" name="provincia" placeholder="Provincia" value={form.provincia} onChange={handleChange} className="border p-2 mb-4 w-full" />
-              <input type="text" name="stato" placeholder="Stato" value={form.stato} onChange={handleChange} className="border p-2 mb-4 w-full" />
-              <input type="password" name="password" placeholder="Password (solo se vuoi cambiarla)" value={form.password} onChange={handleChange} className="border p-2 mb-4 w-full" />
-
-              <div className="flex gap-4 mb-4">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" name="attivo" checked={form.attivo} onChange={handleChange} />
-                  Attivo
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" name="superadmin" checked={form.superadmin} onChange={handleChange} />
-                  Superadmin
-                </label>
-              </div>
-
               <select name="ruolo" value={form.ruolo} onChange={handleChange} className="border p-2 mb-4 w-full" required>
                 <option value="">Seleziona Ruolo</option>
                 <option value="amministratore">Amministratore</option>
@@ -165,9 +155,18 @@ export default function Utenti() {
                 <option value="sottoutente">Sottoutente</option>
               </select>
 
-              <div className="flex justify-end gap-4">
-                <button type="button" onClick={() => setShowModal(false)} className="bg-gray-300 text-black p-2 rounded hover:bg-gray-400">Annulla</button>
-                <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Salva</button>
+              <div className="flex justify-end gap-4 mt-6">
+                <button type="button" onClick={() => setShowModal(false)} className="bg-gray-400 text-black p-2 rounded hover:bg-gray-500">
+                  Annulla
+                </button>
+                {editingUtente && (
+                  <button type="button" onClick={handleElimina} className="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+                    Elimina
+                  </button>
+                )}
+                <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                  Conferma
+                </button>
               </div>
             </form>
           </Modal>
