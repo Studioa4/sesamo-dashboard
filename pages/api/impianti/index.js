@@ -60,7 +60,9 @@ export default async function handler(req, res) {
       res.status(201).json({ message: 'Impianto creato con successo!', impianto: response.data[0] });
 
     } catch (err) {
-      console.error('Errore creazione impianto:', err.response?.data || err.message);
+      POST https://sesamo.brickly.cloud/api/impianti 500 (Internal Server Error)
+      Errore salvataggio impianto: { error: 'Errore creazione impianto' }
+
       res.status(500).json({ error: 'Errore creazione impianto' });
     }
   } 
