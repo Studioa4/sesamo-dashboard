@@ -131,7 +131,7 @@ export default function Utenti() {
           </button>
         </div>
 
-        <DataTable columns={columns} data={utenti} />
+        <<DataTable columns={columns} data={utenti} onRowDoubleClick={openModalForEdit} />
 
         {showModal && (
           <Modal title={editingUtente ? "Modifica Utente" : "Aggiungi Utente"} onClose={() => setShowModal(false)}>
