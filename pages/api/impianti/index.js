@@ -1,5 +1,3 @@
-// /pages/api/impianti/index.js
-
 import axios from 'axios';
 
 const supabaseUrl = process.env.SUPABASE_URL + '/rest/v1/';
@@ -8,35 +6,47 @@ const supabaseApiKey = process.env.SUPABASE_ANON_KEY;
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const response = await axios.get(supabaseUrl + 'impianti', {
-        headers: {
-          apikey: supabaseApiKey,
-          Authorization: `Bearer ${supabaseApiKey}`
+      const response = await axios.get(
+        supabaseUrl + 'impianti',
+        {
+          headers: {
+            apikey: supabaseApiKey,
+            Authorization: `Bearer ${supabaseApiKey}`,
+            "Content-Type": "application/json"
+          }
         }
-      });
+      );
       res.status(200).json(response.data);
     } catch (err) {
-      console.error('Errore GET impianti:', err.response?.data || err.message);
-      res.status(500).json({ error: 'Errore recupero impianti' });
+      console.error('Errore caricamento impianti:', err.response?.data || err.message);
+      res.status(500).json({ error: 'Errore caricamento impianti' });
     }
-  }
+  } 
+  else if (req.method === 'POST') {
+    const { denominazione, amministratore_id } = req.body;
 
-  if (req.method === 'POST') {
-    const { nome, codice_attivazione } = req.body;
+    if (!denominazione) {
+      return res.status(400).json({ error: 'Denominazione è obbligatoria' });
+    }
 
-    if (!nome || !codice_attivazione) {
-      return res.status(400).json({ error: 'Tutti i campi sono obbligatori' });
+    if (!amministratore_id) {
+      return res.status(400).json({ error: 'Amministratore è obbligatorio' });
     }
 
     try {
+      const impiantoData = {
+        denominazione,
+        indirizzo: req.body.indirizzo || '',
+        citta: req.body.citta || '',
+        provincia: req.body.provincia || '',
+        latitudine: req.body.latitudine ? parseFloat(req.body.latitudine) : null,
+        longitudine: req.body.longitudine ? parseFloat(req.body.longitudine) : null,
+        amministratore_id
+      };
+
       const response = await axios.post(
         supabaseUrl + 'impianti',
-        [
-          {
-            nome,
-            codice_attivazione
-          }
-        ],
+        [impiantoData],
         {
           headers: {
             apikey: supabaseApiKey,
@@ -48,13 +58,13 @@ export default async function handler(req, res) {
       );
 
       res.status(201).json({ message: 'Impianto creato con successo!', impianto: response.data[0] });
+
     } catch (err) {
-      console.error('Errore POST impianti:', err.response?.data || err.message);
+      console.error('Errore creazione impianto:', err.response?.data || err.message);
       res.status(500).json({ error: 'Errore creazione impianto' });
     }
-  }
-
-  if (req.method !== 'GET' && req.method !== 'POST') {
+  } 
+  else {
     res.status(405).json({ error: 'Metodo non consentito' });
   }
 }
